@@ -1,43 +1,78 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/ozVFrFMv)
-# CSCI 1260 — Project
+# Minesweeper Console Game
 
-## Project Instructions
-All project requirements, grading criteria, and submission details are provided on **D2L**.  
-Refer to D2L as the *authoritative source* for this assignment.
+## Overview
+This project is a console-based implementation of the classic Minesweeper game built using C#. It demonstrates object-oriented design, game logic, and unit testing.
 
-This repository is intentionally minimal. You are responsible for:
-- Creating the solution and projects
-- Designing the class structure
-- Implementing the required functionality
+The game allows users to reveal tiles, place flags, and avoid hidden mines while attempting to clear the board.
 
 ---
 
-## Getting Started (CLI)
+##  Features
+- Random mine placement using a seed
+- Tile reveal system with cascade behavior
+- Flagging and unflagging tiles
+- Win and loss conditions
+- Console-based user interface with row/column labels
+- Unit tests for core game functionality
 
-You may use **Visual Studio**, **VS Code**, or the **terminal**.
+---
 
-### Create a solution
-```bash
-dotnet new sln -n ProjectName
-```
+## Project Structure
+src/
+├── Minesweeper.Core/
+│ ├── Board.cs
+│ ├── Tile.cs
+│
+├── Minesweeper.Console/
+│ ├── Program.cs
+│
+└── Minesweeper.Tests/
+├── BoardTests.cs
 
-### Create a project (example: console app)
-```bash
-dotnet new console -n ProjectName.App
-```
 
-### Add the project to the solution
-```bash
-dotnet sln add ProjectName.App
-```
+---
 
-### Build and run
-```bash
-dotnet build
-dotnet run --project ProjectName.App
-```
+## How to Run the Game
 
-## Notes
-- Commit early and commit often.
-- Your repository history is part of your submission.
-- Update this README with build/run instructions specific to your project.
+1. Navigate to the project root  
+2. Run the command: dotnet run --project src/Minesweeper.Console
+
+
+3. Enter moves using:
+- `row column` → Reveal a tile  
+- `f row column` → Flag/unflag a tile  
+
+Example: 2 3, f 1 4
+
+
+---
+
+## Running Unit Tests
+
+To run all tests: dotnet test
+
+
+This project includes 10 unit tests covering:
+- Board initialization
+- Mine placement
+- Adjacency calculations
+- Tile reveal logic
+- Flagging behavior
+- Deterministic board generation using seed values
+
+---
+
+##  Concepts Demonstrated
+- Object-Oriented Programming (OOP)
+- 2D Arrays and grid-based logic
+- Recursion (cascade reveal)
+- Randomization with seeds
+- Unit testing with xUnit
+- Separation of concerns (Core vs Console vs Tests)
+
+---
+
+## Reflection
+Through this project, I learned how to structure a multi-project C# application and separate core logic from user interaction. I gained experience working with 2D arrays, recursion for cascade reveals, and implementing deterministic randomness using seeds. Additionally, I developed unit tests using xUnit to verify correctness and ensure reliability of the game logic. This project strengthened my problem-solving skills and understanding of software design principles.
+
+--
