@@ -1,3 +1,5 @@
+using System;
+
 namespace Minesweeper.Core;
 
 public class Game
@@ -7,34 +9,36 @@ public class Game
     public bool IsWin { get; private set; }
     public int Moves { get; private set; }
 
+    public DateTime StartTime { get; }
+    public DateTime? EndTime { get; private set; }
+
     public Game(int size, int mineCount, int seed)
     {
         Board = new Board(size, mineCount, seed);
         IsGameOver = false;
         IsWin = false;
         Moves = 0;
+        StartTime = DateTime.Now;
     }
 
-    // Reveal a tile
     public void Reveal(int r, int c)
     {
-        if (IsGameOver)
+        if (IsGameOver || !Board.IsInBounds(r, c))
             return;
 
         var tile = Board.Grid[r, c];
 
-        // Don't reveal flagged tiles
-        if (tile.IsFlagged)
+        if (tile.IsFlagged || tile.IsRevealed)
             return;
 
         Moves++;
 
-        // Hit a mine → lose
         if (tile.IsMine)
         {
             tile.IsRevealed = true;
             IsGameOver = true;
             IsWin = false;
+            EndTime = DateTime.Now;
             return;
         }
 
@@ -43,25 +47,21 @@ public class Game
         CheckWin();
     }
 
-    // Flag / unflag
     public void ToggleFlag(int r, int c)
     {
-        if (IsGameOver)
+        if (IsGameOver || !Board.IsInBounds(r, c))
             return;
 
         Board.ToggleFlag(r, c);
     }
 
-    // Check win condition
     private void CheckWin()
     {
-        foreach (var tile in Board.Grid)
+        if (Board.AllSafeTilesRevealed())
         {
-            if (!tile.IsMine && !tile.IsRevealed)
-                return;
+            IsGameOver = true;
+            IsWin = true;
+            EndTime = DateTime.Now;
         }
-
-        IsGameOver = true;
-        IsWin = true;
     }
 }

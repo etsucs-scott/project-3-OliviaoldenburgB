@@ -1,6 +1,7 @@
 using System;
 
 namespace Minesweeper.Core;
+
 public class Board
 {
     public int Size { get; }
@@ -19,19 +20,13 @@ public class Board
         CalculateAdjacency();
     }
 
-    // Create empty tiles
     private void InitializeBoard()
     {
         for (int r = 0; r < Size; r++)
-        {
             for (int c = 0; c < Size; c++)
-            {
                 Grid[r, c] = new Tile();
-            }
-        }
     }
 
-    // Place mines using seed
     private void PlaceMines(int mineCount)
     {
         int placed = 0;
@@ -49,7 +44,6 @@ public class Board
         }
     }
 
-    // Count adjacent mines
     private void CalculateAdjacency()
     {
         for (int r = 0; r < Size; r++)
@@ -65,14 +59,14 @@ public class Board
                 {
                     for (int dc = -1; dc <= 1; dc++)
                     {
+                        if (dr == 0 && dc == 0)
+                            continue;
+
                         int nr = r + dr;
                         int nc = c + dc;
 
-                        if (nr >= 0 && nr < Size && nc >= 0 && nc < Size)
-                        {
-                            if (Grid[nr, nc].IsMine)
-                                count++;
-                        }
+                        if (IsInBounds(nr, nc) && Grid[nr, nc].IsMine)
+                            count++;
                     }
                 }
 
@@ -81,9 +75,16 @@ public class Board
         }
     }
 
-    // Reveal tile (with cascade)
+    public bool IsInBounds(int r, int c)
+    {
+        return r >= 0 && r < Size && c >= 0 && c < Size;
+    }
+
     public void Reveal(int r, int c)
     {
+        if (!IsInBounds(r, c))
+            return;
+
         var tile = Grid[r, c];
 
         if (tile.IsRevealed || tile.IsFlagged)
@@ -91,33 +92,41 @@ public class Board
 
         tile.IsRevealed = true;
 
-        // Cascade if no adjacent mines
-        if (!tile.IsMine && tile.AdjacentMines == 0)
-        {
-            for (int dr = -1; dr <= 1; dr++)
-            {
-                for (int dc = -1; dc <= 1; dc++)
-                {
-                    int nr = r + dr;
-                    int nc = c + dc;
+        if (tile.IsMine || tile.AdjacentMines != 0)
+            return;
 
-                    if (nr >= 0 && nr < Size && nc >= 0 && nc < Size)
-                    {
-                        Reveal(nr, nc);
-                    }
-                }
+        for (int dr = -1; dr <= 1; dr++)
+        {
+            for (int dc = -1; dc <= 1; dc++)
+            {
+                Reveal(r + dr, c + dc);
             }
         }
     }
 
-    // Flag / unflag tile
     public void ToggleFlag(int r, int c)
     {
+        if (!IsInBounds(r, c))
+            return;
+
         var tile = Grid[r, c];
 
         if (!tile.IsRevealed)
-        {
             tile.IsFlagged = !tile.IsFlagged;
+    }
+
+    public bool AllSafeTilesRevealed()
+    {
+        for (int r = 0; r < Size; r++)
+        {
+            for (int c = 0; c < Size; c++)
+            {
+                var tile = Grid[r, c];
+
+                if (!tile.IsMine && !tile.IsRevealed)
+                    return false;
+            }
         }
+        return true;
     }
 }
